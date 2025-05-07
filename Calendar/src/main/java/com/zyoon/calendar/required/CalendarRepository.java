@@ -13,7 +13,6 @@ public class CalendarRepository {
 
     public void insertOneCalendar(CalendarDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
-            System.out.println("연결 성공!");
 
             String sql = "INSERT INTO calendarlist (content, name, password) VALUES (?, ?, ?)";
 
@@ -31,25 +30,26 @@ public class CalendarRepository {
         }
     }
 
-    public List<CalendarDto> selectAllCalendarList(){
+    public List<CalendarDto> selectAllCalendarList(CalendarDto Dto){
         List<CalendarDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
-            System.out.println("연결 성공!");
 
-            String sql = "SELECT * FROM calendarlist";
+            String sql = "SELECT * \n" +
+                    "FROM calendar_db.calendarlist\n" +
+                    "order by updateTime desc";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()){
-                    CalendarDto dto = new CalendarDto();
-                    dto.setId(rs.getInt("id"));
-                    dto.setContent(rs.getString("content"));
-                    dto.setName(rs.getString("name"));
-                    dto.setPassword(rs.getString("password"));
-                    dto.setDate(rs.getTimestamp("date")); // DATETIME → Timestamp → Date
+                    CalendarDto dtoTemp = new CalendarDto();
+                    dtoTemp.setId(rs.getInt("id"));
+                    dtoTemp.setContent(rs.getString("content"));
+                    dtoTemp.setName(rs.getString("name"));
+                    dtoTemp.setPassword(rs.getString("password"));
+                    dtoTemp.setUpdateTime(rs.getTimestamp("updateTime"));
 
-                    dtoList.add(dto);
+                    dtoList.add(dtoTemp);
                 }
             }
 

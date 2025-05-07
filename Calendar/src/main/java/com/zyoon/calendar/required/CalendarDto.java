@@ -12,9 +12,16 @@ public class CalendarDto {
     private String content;
     private String name;
     private String password;
+    //Json 변경 시 날짜 포맷 변경
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private Date date;
+    private Date updateTime;
 
     public CalendarDto() {
+
+    }
+
+    public CalendarDto(String name, Date updateTime) {
+        this.name = name;
+        this.updateTime = updateTime;
     }
 }

@@ -15,8 +15,8 @@ public class CalendarService {
         repository.insertOneCalendar(dto);
     }
 
-    public List<CalendarDto> getAllCalendarList(){
-        return repository.selectAllCalendarList();
+    public List<CalendarDto> getAllCalendarList(CalendarDto dto){
+        return repository.selectAllCalendarList(dto);
     }
 
 }
