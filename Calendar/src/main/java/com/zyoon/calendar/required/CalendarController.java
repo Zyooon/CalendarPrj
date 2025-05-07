@@ -3,6 +3,8 @@ package com.zyoon.calendar.required;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("calendar")
 public class CalendarController {
@@ -11,9 +13,9 @@ public class CalendarController {
     private CalendarService service;
 
     @GetMapping("list")
-    public String showCalendarList(){
+    public List<CalendarDto> showCalendarList(){
 
-        return "this is my List";
+        return service.getAllCalendarList();
     }
 
     @GetMapping("detail/{id}")
@@ -23,16 +25,9 @@ public class CalendarController {
     }
 
     @PostMapping("write")
-    public void writeOneCalendar(@RequestBody CalendarDto dto){
-        String name = dto.getName();
-        String content = dto.getContent();
-        String password = dto.getPassword();
-        System.out.println("name: " + name);
-        System.out.println("content: " + content);
-        System.out.println("password: " + password);
+    public void writeOneCalendar(@RequestBody CalendarDto dto) {
 
-        service.writeOneCalendar(dto);
-
+        service.addOneCalendar(dto);
 
     }
 
@@ -45,5 +40,4 @@ public class CalendarController {
     public void deleteOneCalendar(@PathVariable("id") int id){
 
     }
-
 }

@@ -1,5 +1,6 @@
 package com.zyoon.calendar.required;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ public class CalendarDto {
     private String content;
     private String name;
     private String password;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date date;
 
     public CalendarDto() {

@@ -4,11 +4,14 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CalendarRepository {
 
-    public void writeOneCalendar(CalendarDto dto){
+    public void insertOneCalendar(CalendarDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
             System.out.println("연결 성공!");
 
@@ -26,5 +29,33 @@ public class CalendarRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<CalendarDto> selectAllCalendarList(){
+        List<CalendarDto> dtoList = new ArrayList<>();
+        try (Connection conn = MySqlConnection.getConnection()) {
+            System.out.println("연결 성공!");
+
+            String sql = "SELECT * FROM calendarlist";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()){
+                    CalendarDto dto = new CalendarDto();
+                    dto.setId(rs.getInt("id"));
+                    dto.setContent(rs.getString("content"));
+                    dto.setName(rs.getString("name"));
+                    dto.setPassword(rs.getString("password"));
+                    dto.setDate(rs.getTimestamp("date")); // DATETIME → Timestamp → Date
+
+                    dtoList.add(dto);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dtoList;
     }
 }
