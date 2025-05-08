@@ -6,12 +6,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 @Repository
 public class CalendarRepository {
+    Calendar kstTime = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
-    public void insertOneCalendar(CalendarDto dto){
+    public void insertOneCalendar(CalendarListDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "INSERT INTO calendarlist (content, name, password) VALUES (?, ?, ?)";
@@ -30,24 +33,50 @@ public class CalendarRepository {
         }
     }
 
-    public List<CalendarDto> selectAllCalendarList(CalendarDto Dto){
-        List<CalendarDto> dtoList = new ArrayList<>();
+    public List<CalendarListDto> selectAllCalendarListBySearch(CalendarSearchDto dto){
+
+        List<CalendarListDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "SELECT * \n" +
-                    "FROM calendar_db.calendarlist\n" +
-                    "order by updateTime desc";
+            StringBuilder sql = new StringBuilder("SELECT * FROM calendar_db.calendarlist WHERE 1=1");
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            List<Object> list = new ArrayList<>();
+
+            // 조건 추가
+            if (!dto.getSearchName().isEmpty()) {
+                sql.append(" AND name LIKE ?");
+                list.add("%" + dto.getSearchName().get() + "%");
+            }
+
+            if (dto.getFirstTime() != null) {
+                if(dto.getLastTime() == null){
+                    sql.append(" AND DATE(time) = ?");
+                    list.add(dto.getFirstTime());
+                }else {
+                    sql.append(" AND time BETWEEN ? AND ?");
+                    list.add(dto.getFirstTime());
+                    list.add(dto.getLastTime());
+                }
+
+            }
+
+            sql.append(" ORDER BY time DESC");
+
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+                for (int i = 0; i < list.size(); i++) {
+                    stmt.setObject(i + 1, list.get(i));
+                }
+
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()){
-                    CalendarDto dtoTemp = new CalendarDto();
+                    CalendarListDto dtoTemp = new CalendarListDto();
                     dtoTemp.setId(rs.getInt("id"));
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
                     dtoTemp.setPassword(rs.getString("password"));
-                    dtoTemp.setUpdateTime(rs.getTimestamp("updateTime"));
+                    dtoTemp.setTime(rs.getTimestamp("time", kstTime));
 
                     dtoList.add(dtoTemp);
                 }
@@ -58,4 +87,31 @@ public class CalendarRepository {
         }
         return dtoList;
     }
+
+    public CalendarListDto selectOneCalendarById(CalendarListDto dto){
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "SELECT * FROM calendar_db.calendarlist WHERE id = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setObject(1, dto.getId());
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()){
+                    dto.setContent(rs.getString("content"));
+                    dto.setName(rs.getString("name"));
+                    dto.setPassword(rs.getString("password"));
+                    dto.setTime(rs.getTimestamp("time", kstTime));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dto;
+    }
+
+
 }

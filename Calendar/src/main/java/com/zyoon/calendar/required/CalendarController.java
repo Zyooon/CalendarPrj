@@ -3,11 +3,6 @@ package com.zyoon.calendar.required;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,36 +14,27 @@ public class CalendarController {
     private CalendarService service;
 
     @GetMapping("list")
-    public List<CalendarDto> showCalendarList(@RequestParam(required = false) String name, @RequestParam(required = false) Optional<String> updateTime) {
+    public List<CalendarListDto> showCalendarList(@RequestParam(required = false) Optional<String> name, @RequestParam(required = false) Optional<String> time) {
 
+        CalendarSearchDto dto = new CalendarSearchDto(name, time);
 
-        Date date = null;
-        if(updateTime.isPresent()){
-            try {
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                date = formatter.parse(updateTime.get());
-            } catch (ParseException e) {
-                System.out.println("날짜가 없네요");
-            }
-        }
+        System.out.println(dto.toString());
 
-        System.out.println("name : " + name);
-        System.out.println("updateTime : " + updateTime);
-
-        CalendarDto dto = new CalendarDto(name, date);
-
-
-        return service.getAllCalendarList(dto);
+        return service.getAllCalendarListBySearch(dto);
     }
 
     @GetMapping("detail/{id}")
-    public String showOneCalendar(@PathVariable("id") int id){
+    public CalendarListDto showOneCalendar(@PathVariable("id") int id){
 
-        return id+"";
+        CalendarListDto dto = new CalendarListDto();
+        dto.setId(id);
+
+
+        return service.getOneCalendarById(dto);
     }
 
     @PostMapping("write")
-    public void writeOneCalendar(@RequestBody CalendarDto dto) {
+    public void writeOneCalendar(@RequestBody CalendarListDto dto) {
 
         service.addOneCalendar(dto);
 
