@@ -1,4 +1,4 @@
-package com.zyoon.calendar.required;
+package com.zyoon.calendar.challenge;
 
 import org.springframework.stereotype.Repository;
 
@@ -76,7 +76,7 @@ class CalendarRepository {
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
                     dtoTemp.setPassword(rs.getString("password"));
-                    dtoTemp.setModifyTime(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
+                    dtoTemp.setModifyDate(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
 
                     dtoList.add(dtoTemp);
                 }
@@ -103,7 +103,7 @@ class CalendarRepository {
                     dto.setContent(rs.getString("content"));
                     dto.setName(rs.getString("name"));
                     dto.setPassword(rs.getString("password"));
-                    dto.setModifyTime(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
+                    dto.setModifyDate(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
                 }
             }
 

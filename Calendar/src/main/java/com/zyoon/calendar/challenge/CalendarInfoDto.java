@@ -1,30 +1,24 @@
-package com.zyoon.calendar.required;
+package com.zyoon.calendar.challenge;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter @Setter
-public class CalendarListDto {
+public class CalendarInfoDto {
     private int id;
-    private String content;
+    private int memberId;
     private String name;
+    private String content;
     private String password;
     //Json 변경 시 날짜 포맷 변경
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date time;
+    private LocalDateTime modifyDate;
 
-    public CalendarListDto() {
+    public CalendarInfoDto() {
 
-    }
-
-    public CalendarListDto(String name, Date time) {
-        this.name = name;
-        this.time = time;
     }
 
     @Override
@@ -32,9 +26,8 @@ public class CalendarListDto {
         return "CalendarListDto{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
-                ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", time=" + time +
+                ", time=" + modifyDate +
                 '}';
     }
 }

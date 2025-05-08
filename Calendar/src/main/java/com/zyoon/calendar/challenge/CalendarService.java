@@ -1,4 +1,4 @@
-package com.zyoon.calendar.required;
+package com.zyoon.calendar.challenge;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-class CalendarService {
+public class CalendarService {
 
     @Autowired
     private CalendarRepository repository;

@@ -1,9 +1,9 @@
-package com.zyoon.calendar.required;
+package com.zyoon.calendar.challenge;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-class MySqlConnection {
+public class MySqlConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/calendar_db?serverTimezone=UTC";
     private static final String USER = "root";

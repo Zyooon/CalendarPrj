@@ -1,16 +1,14 @@
-package com.zyoon.calendar.required;
+package com.zyoon.calendar.challenge;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 @Getter @Setter
-class CalendarSearchDto {
+public class CalendarSearchDto {
     private Optional<String> searchName;
     private Optional<String> searchTime;
 
