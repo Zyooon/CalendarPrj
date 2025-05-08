@@ -53,4 +53,20 @@ public class CalendarService {
 
     }
 
+    public void updateOneCalendarById(CalendarListDto dto){
+
+        if(repository.verifyPasswordById(dto)){
+            System.out.println(dto);
+            repository.updateOneCalendarById(dto);
+        }
+    }
+
+    public void deleteOneCalendarById(CalendarListDto dto){
+
+        if(repository.verifyPasswordById(dto)){
+            System.out.println(dto);
+            repository.deleteOneCalendarById(dto);
+        }
+    }
+
 }

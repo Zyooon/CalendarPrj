@@ -17,11 +17,11 @@ public class CalendarRepository {
     public void insertOneCalendar(CalendarListDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "INSERT INTO calendarlist (content, name, password) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO calendarlist (name, content, password) VALUES (?, ?, ?)";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, dto.getContent());
-                stmt.setString(2, dto.getName());
+                stmt.setString(1, dto.getName());
+                stmt.setString(2, dto.getContent());
                 stmt.setString(3, dto.getPassword());
 
                 int rows = stmt.executeUpdate();
@@ -112,6 +112,69 @@ public class CalendarRepository {
         }
         return dto;
     }
+
+    public void updateOneCalendarById(CalendarListDto dto){
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "UPDATE calendar_db.calendarlist SET name = ?, content = ?, time = NOW() where id = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, dto.getName());
+                stmt.setString(2, dto.getContent());
+                stmt.setInt(3, dto.getId());
+
+                int rows = stmt.executeUpdate();
+                System.out.println(rows + "행 변경 완료!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void deleteOneCalendarById(CalendarListDto dto){
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "DELETE FROM calendar_db.calendarlist WHERE id = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, dto.getId());
+
+                int rows = stmt.executeUpdate();
+                System.out.println(rows + "행 삭제 완료!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public boolean verifyPasswordById(CalendarListDto dto){
+
+        String password = "";
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "SELECT password FROM calendar_db.calendarlist WHERE id = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setObject(1, dto.getId());
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()){
+                    password = rs.getString("password");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return password.equals(dto.getPassword());
+
+    }
+
 
 
 }

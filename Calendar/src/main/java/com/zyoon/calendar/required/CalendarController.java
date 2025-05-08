@@ -40,13 +40,20 @@ public class CalendarController {
 
     }
 
-    @GetMapping("update/{id}")
-    public void updateOneCalendar(@PathVariable("id") int id){
+    @PostMapping("update")
+    public void updateOneCalendar(@RequestBody CalendarListDto dto){
+
+        System.out.println(dto.toString());
+
+        service.updateOneCalendarById(dto);
 
     }
 
-    @GetMapping("delete/{id}")
-    public void deleteOneCalendar(@PathVariable("id") int id){
+    @PostMapping("delete")
+    public void deleteOneCalendar(@RequestBody CalendarListDto dto){
 
+        System.out.println(dto.toString());
+
+        service.deleteOneCalendarById(dto);
     }
 }
