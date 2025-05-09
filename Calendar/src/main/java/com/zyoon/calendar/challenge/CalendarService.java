@@ -54,10 +54,14 @@ public class CalendarService {
     }
 
     public void updateOneCalendarById(CalendarInfoDto dto){
-
         if(repository.verifyPasswordById(dto)){
-            System.out.println(dto);
-            repository.updateOneCalendarById(dto);
+            if(dto.getName() != null && !dto.getName().isEmpty()){
+                dto.setMemberId(repository.selectOneMemberIdById(dto));
+                repository.updateOneNameById(dto);
+            }
+            if(dto.getContent() != null && !dto.getContent().isEmpty()){
+                repository.updateOneContentById(dto);
+            }
         }
     }
 

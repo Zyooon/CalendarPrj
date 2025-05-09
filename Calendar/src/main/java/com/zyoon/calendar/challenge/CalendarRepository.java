@@ -144,7 +144,7 @@ class CalendarRepository {
     public CalendarInfoDto selectOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "SELECT * FROM calendar_db.calendar_required WHERE id = ?";
+            String sql = "SELECT * FROM calendar_db.calendar_challenge WHERE id = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -166,15 +166,54 @@ class CalendarRepository {
         return dto;
     }
 
-    public void updateOneCalendarById(CalendarInfoDto dto){
+    public int selectOneMemberIdById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "UPDATE calendar_db.calendar_required SET name = ?, content = ?, modify_date = NOW() where id = ?";
+            String sql = "SELECT memberId FROM calendar_db.calendar_challenge WHERE id = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setObject(1, dto.getId());
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()){
+                    return rs.getInt("memberId");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void updateOneContentById(CalendarInfoDto dto){
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "UPDATE calendar_db.calendar_challenge SET content = ?, modifyDate = NOW() where id = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, dto.getContent());
+                stmt.setInt(2, dto.getId());
+
+                int rows = stmt.executeUpdate();
+                System.out.println(rows + "행 변경 완료!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateOneNameById(CalendarInfoDto dto){
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "UPDATE calendar_db.member SET name = ?, modifyDate = NOW() where id = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, dto.getName());
-                stmt.setString(2, dto.getContent());
-                stmt.setInt(3, dto.getId());
+                stmt.setInt(2, dto.getId());
 
                 int rows = stmt.executeUpdate();
                 System.out.println(rows + "행 변경 완료!");
@@ -187,7 +226,7 @@ class CalendarRepository {
     public void deleteOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "DELETE FROM calendar_db.calendar_required WHERE id = ?";
+            String sql = "DELETE FROM calendar_db.calendar_challenge WHERE id = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, dto.getId());
@@ -207,7 +246,7 @@ class CalendarRepository {
         String password = "";
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "SELECT password FROM calendar_db.calendar_required WHERE id = ?";
+            String sql = "SELECT password FROM calendar_db.calendar_challenge WHERE id = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 

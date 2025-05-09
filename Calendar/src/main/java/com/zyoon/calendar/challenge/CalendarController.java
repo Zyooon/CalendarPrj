@@ -41,16 +41,14 @@ public class CalendarController {
 
     }
 
-    @PostMapping("update")
+    @PutMapping("update")
     public void updateOneCalendar(@RequestBody CalendarInfoDto dto){
-
-        System.out.println(dto.toString());
 
         service.updateOneCalendarById(dto);
 
     }
 
-    @PostMapping("delete")
+    @DeleteMapping("delete")
     public void deleteOneCalendar(@RequestBody CalendarInfoDto dto){
 
         System.out.println(dto.toString());
