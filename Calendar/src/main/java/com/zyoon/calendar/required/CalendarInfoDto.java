@@ -20,9 +20,8 @@ class CalendarInfoDto {
 
     }
 
-    public CalendarInfoDto(String name, LocalDateTime modifyTime) {
-        this.name = name;
-        this.modifyTime = modifyTime;
+    public CalendarInfoDto(int id) {
+        this.id = id;
     }
 
     @Override

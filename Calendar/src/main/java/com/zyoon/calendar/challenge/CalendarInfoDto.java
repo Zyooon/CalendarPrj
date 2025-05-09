@@ -15,4 +15,11 @@ public class CalendarInfoDto {
     //Json 변경 시 날짜 포맷 변경
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifyDate;
+
+    public CalendarInfoDto() {
+    }
+
+    public CalendarInfoDto(int id) {
+        this.id = id;
+    }
 }

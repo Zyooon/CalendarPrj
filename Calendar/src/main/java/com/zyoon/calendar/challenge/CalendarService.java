@@ -1,6 +1,7 @@
 package com.zyoon.calendar.challenge;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -53,6 +54,7 @@ public class CalendarService {
 
     }
 
+    @Transactional
     public void updateOneCalendarById(CalendarInfoDto dto){
         if(repository.verifyPasswordById(dto)){
             if(dto.getName() != null && !dto.getName().isEmpty()){

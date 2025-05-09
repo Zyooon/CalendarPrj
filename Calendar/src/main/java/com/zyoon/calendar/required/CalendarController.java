@@ -26,9 +26,7 @@ class CalendarController {
     @GetMapping("detail/{id}")
     public CalendarInfoDto showOneCalendar(@PathVariable("id") int id){
 
-        CalendarInfoDto dto = new CalendarInfoDto();
-        dto.setId(id);
-
+        CalendarInfoDto dto = new CalendarInfoDto(id);
 
         return service.getOneCalendarById(dto);
     }
@@ -51,8 +49,6 @@ class CalendarController {
 
     @DeleteMapping("delete")
     public void deleteOneCalendar(@RequestBody CalendarInfoDto dto){
-
-        System.out.println(dto.toString());
 
         service.deleteOneCalendarById(dto);
     }

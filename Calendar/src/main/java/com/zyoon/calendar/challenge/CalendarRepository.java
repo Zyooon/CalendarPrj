@@ -144,7 +144,10 @@ class CalendarRepository {
     public CalendarInfoDto selectOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "SELECT * FROM calendar_db.calendar_challenge WHERE id = ?";
+            String sql = "SELECT c.id,c.memberId ,name, content, c.modifyDate \n" +
+                    "FROM calendar_db.calendar_challenge AS c \n" +
+                    "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
+                    "WHERE c.id = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -155,8 +158,8 @@ class CalendarRepository {
                 if (rs.next()){
                     dto.setContent(rs.getString("content"));
                     dto.setName(rs.getString("name"));
-                    dto.setPassword(rs.getString("password"));
-                    dto.setModifyDate(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
+                    dto.setMemberId(rs.getInt("memberId"));
+                    dto.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
                 }
             }
 
