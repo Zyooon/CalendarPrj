@@ -32,16 +32,14 @@ class CalendarRepository {
             e.printStackTrace();
         }
     }
-
-    public List<CalendarInfoDto> selectAllCalendarListBySearch(CalendarSearchDto dto){
+    public int selectCalendarListCountBySearch(SearchDto dto){
 
         List<CalendarInfoDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            StringBuilder sql = new StringBuilder("SELECT c.id,c.memberId ,name, content, c.modifyDate \n" +
+            StringBuilder sql = new StringBuilder("SELECT count(*) AS count \n" +
                     "FROM calendar_db.calendar_challenge AS c \n" +
-                    "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
-                    "WHERE name = name");
+                    "WHERE id = id");
 
             List<Object> list = new ArrayList<>();
 
@@ -63,7 +61,59 @@ class CalendarRepository {
 
             }
 
-            sql.append(" ORDER BY modifyDate DESC");
+            try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+                for (int i = 0; i < list.size(); i++) {
+                    stmt.setObject(i + 1, list.get(i));
+                }
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()){
+                    return rs.getInt("count");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return 0;
+    }
+
+    public List<CalendarInfoDto> selectAllCalendarListBySearch(SearchDto searchDto){
+
+        List<CalendarInfoDto> dtoList = new ArrayList<>();
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            StringBuilder sql = new StringBuilder("SELECT c.id,c.memberId ,name, content, c.modifyDate \n" +
+                    "FROM calendar_db.calendar_challenge AS c \n" +
+                    "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
+                    "WHERE name = name");
+
+            List<Object> list = new ArrayList<>();
+
+            // 조건 추가
+            if (!searchDto.getSearchMemberId().isEmpty()) {
+                sql.append(" AND memberId = ?");
+                list.add(searchDto.getSearchMemberId().get());
+            }
+
+            if (searchDto.getFirstTime() != null) {
+                if(searchDto.getLastTime() == null){
+                    sql.append(" AND DATE(modifyDate) = ?");
+                    list.add(searchDto.getFirstTime());
+                }else {
+                    sql.append(" AND modifyDate BETWEEN ? AND ?");
+                    list.add(searchDto.getFirstTime());
+                    list.add(searchDto.getLastTime());
+                }
+
+            }
+
+            sql.append(" ORDER BY modifyDate DESC\n");
+            sql.append("LIMIT ? OFFSET ?");
+            list.add(searchDto.getPageLimit());
+            list.add((searchDto.getPageNumber()-1) * searchDto.getPageLimit());
 
 
             try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {

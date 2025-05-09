@@ -18,24 +18,27 @@ public class CalendarService {
         repository.insertOneCalendar(dto);
     }
 
-    public List<CalendarInfoDto> getAllCalendarListBySearch(CalendarSearchDto dto){
+    public List<CalendarInfoDto> getAllCalendarListBySearch(SearchDto searchDto){
 
-        if(dto.getSearchTime().isPresent()){
-            String searchTime = dto.getSearchTime().get();
+        verifyCalendarListBySearchTime(searchDto);
+
+        return repository.selectAllCalendarListBySearch(searchDto);
+    }
+
+    private void verifyCalendarListBySearchTime(SearchDto searchDto){
+        if(searchDto.getSearchTime().isPresent()){
+            String searchTime = searchDto.getSearchTime().get();
             if(searchTime.contains("-")){
                 String[] splitDate = searchTime.split("-");
 
-                dto.setFirstTime(changeStringToLocalDateTime((splitDate[0])));
-                dto.setLastTime(changeStringToLocalDateTime((splitDate[1])));
+                searchDto.setFirstTime(changeStringToLocalDateTime((splitDate[0])));
+                searchDto.setLastTime(changeStringToLocalDateTime((splitDate[1])).plusDays(1));
 
             }else {
-                dto.setFirstTime(changeStringToLocalDateTime((searchTime)));
+                searchDto.setFirstTime(changeStringToLocalDateTime((searchTime)));
             }
-
         }
 
-
-        return repository.selectAllCalendarListBySearch(dto);
     }
 
     //String 에서 타입 변경
