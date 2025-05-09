@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Getter @Setter
 public class CalendarSearchDto {
-    private Optional<String> searchName;
+    private Optional<Integer> searchMemberId;
     private Optional<String> searchTime;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -21,23 +21,23 @@ public class CalendarSearchDto {
     public CalendarSearchDto() {
     }
 
-    public CalendarSearchDto(Optional<String> searchName, Optional<String> searchTime) {
-        this.searchName = searchName;
+    public CalendarSearchDto(Optional<Integer> searchMemberId, Optional<String> searchTime) {
+        this.searchMemberId = searchMemberId;
         this.searchTime = searchTime;
     }
 
     @Override
     public String toString() {
         return "CalendarSearchDto{" +
-                "searchName=" + searchName +
+                "searchName=" + searchMemberId +
                 ", searchTime=" + searchTime +
                 ", firstTime=" + firstTime +
                 ", lastTime=" + lastTime +
                 '}';
     }
 
-    public CalendarSearchDto(Optional<String> searchName, LocalDateTime firstTime, LocalDateTime lastTime) {
-        this.searchName = searchName;
+    public CalendarSearchDto(Optional<Integer> searchMemberId, LocalDateTime firstTime, LocalDateTime lastTime) {
+        this.searchMemberId = searchMemberId;
         this.firstTime = firstTime;
         this.lastTime = lastTime;
     }

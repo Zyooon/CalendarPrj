@@ -14,11 +14,11 @@ public class CalendarController {
     private CalendarService service;
 
     @GetMapping("list")
-    public List<CalendarInfoDto> showCalendarList(@RequestParam(required = false) Optional<String> name, @RequestParam(required = false) Optional<String> time) {
+    public List<CalendarInfoDto> showCalendarList(@RequestParam(required = false) Optional<Integer> memberId, @RequestParam(required = false) Optional<String> time) {
 
-        CalendarSearchDto dto = new CalendarSearchDto(name, time);
+        CalendarSearchDto dto = new CalendarSearchDto(memberId, time);
 
-        System.out.println(dto.toString());
+        System.out.println(dto);
 
         return service.getAllCalendarListBySearch(dto);
     }

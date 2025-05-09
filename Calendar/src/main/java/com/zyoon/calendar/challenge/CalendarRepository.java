@@ -17,10 +17,10 @@ class CalendarRepository {
     public void insertOneCalendar(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "INSERT INTO calendar_db.calendar_required (name, content, password) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO calendar_db.calendar_challenge (memberId, content, password) VALUES (?, ?, ?)";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, dto.getName());
+                stmt.setInt(1, dto.getMemberId());
                 stmt.setString(2, dto.getContent());
                 stmt.setString(3, dto.getPassword());
 
@@ -38,29 +38,32 @@ class CalendarRepository {
         List<CalendarInfoDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            StringBuilder sql = new StringBuilder("SELECT * FROM calendar_db.calendar_required WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT c.id,c.memberId ,name, content, c.modifyDate \n" +
+                    "FROM calendar_db.calendar_challenge AS c \n" +
+                    "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
+                    "WHERE name = name");
 
             List<Object> list = new ArrayList<>();
 
             // 조건 추가
-            if (!dto.getSearchName().isEmpty()) {
-                sql.append(" AND name LIKE ?");
-                list.add("%" + dto.getSearchName().get() + "%");
+            if (!dto.getSearchMemberId().isEmpty()) {
+                sql.append(" AND memberId = ?");
+                list.add(dto.getSearchMemberId().get());
             }
 
             if (dto.getFirstTime() != null) {
                 if(dto.getLastTime() == null){
-                    sql.append(" AND DATE(modify_date) = ?");
+                    sql.append(" AND DATE(modifyDate) = ?");
                     list.add(dto.getFirstTime());
                 }else {
-                    sql.append(" AND modify_date BETWEEN ? AND ?");
+                    sql.append(" AND modifyDate BETWEEN ? AND ?");
                     list.add(dto.getFirstTime());
                     list.add(dto.getLastTime());
                 }
 
             }
 
-            sql.append(" ORDER BY modify_date DESC");
+            sql.append(" ORDER BY modifyDate DESC");
 
 
             try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
@@ -73,10 +76,10 @@ class CalendarRepository {
                 while (rs.next()){
                     CalendarInfoDto dtoTemp = new CalendarInfoDto();
                     dtoTemp.setId(rs.getInt("id"));
+                    dtoTemp.setMemberId(rs.getInt("memberId"));
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
-                    dtoTemp.setPassword(rs.getString("password"));
-                    dtoTemp.setModifyDate(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
+                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
 
                     dtoList.add(dtoTemp);
                 }
