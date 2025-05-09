@@ -56,14 +56,16 @@ public class CalendarService {
 
     @Transactional
     public void updateOneCalendarById(CalendarInfoDto dto){
-        if(repository.verifyPasswordById(dto)){
-            if(dto.getName() != null && !dto.getName().isEmpty()){
-                dto.setMemberId(repository.selectOneMemberIdById(dto));
-                repository.updateOneNameById(dto);
-            }
-            if(dto.getContent() != null && !dto.getContent().isEmpty()){
-                repository.updateOneContentById(dto);
-            }
+
+        if(!repository.verifyPasswordById(dto)){
+            throw new CustomException("password","비밀번호가 일치하지 않습니다.");
+        }
+        if(dto.getName() != null && !dto.getName().isEmpty()){
+            dto.setMemberId(repository.selectOneMemberIdById(dto));
+            repository.updateOneNameById(dto);
+        }
+        if(dto.getContent() != null && !dto.getContent().isEmpty()){
+            repository.updateOneContentById(dto);
         }
     }
 
