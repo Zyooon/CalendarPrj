@@ -14,5 +14,4 @@ public class MemberDto {
     private LocalDateTime enrollDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifyDate;
-
 }

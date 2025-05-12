@@ -15,6 +15,10 @@ public class CalendarService {
     @Autowired
     private CalendarRepository repository;
 
+    public void addOneMember(MemberDto dto){
+        repository.insertOneMember(dto);
+    }
+
     public void addOneCalendar(CalendarInfoDto dto){
         repository.insertOneCalendar(dto);
     }

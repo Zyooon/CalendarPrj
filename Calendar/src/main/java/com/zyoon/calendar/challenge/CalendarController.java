@@ -1,5 +1,6 @@
 package com.zyoon.calendar.challenge;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,19 @@ public class CalendarController {
     @Autowired
     private CalendarService service;
 
+    @PostMapping("join")
+    public void joinOneMember(@RequestBody @Valid MemberDto dto){
+        if (dto.getName() == null || dto.getName().trim().isEmpty()) {
+            throw new CustomException("이름 오류","값이 비어 있거나 공백입니다.");
+        }
+        if(!isValidEmail(dto.getEmail())){
+            throw new CustomException("이메일 오류","이메일 형식이 올바르지 않습니다.");
+            
+        }
+
+        service.addOneMember(dto);
+    }
+
     @GetMapping("list")
     public List<CalendarInfoDto> showCalendarList(@RequestParam(defaultValue = "1")int page,
                                                   @RequestParam(required = false) Optional<Integer> memberId,
@@ -25,31 +39,48 @@ public class CalendarController {
     }
 
     @GetMapping("detail/{id}")
-    public CalendarInfoDto showOneCalendar(@PathVariable("id") int id){
+    public CalendarInfoDto showOneCalendar(@PathVariable("id") String id){
+        try {
+            int intId = Integer.parseInt(id);
+            if (intId <= 0) {
+                throw new CustomException("숫자 오류","요청한 값은 0보다 커야합니다.");
+            }
 
-        CalendarInfoDto dto = new CalendarInfoDto(id);
-
-
-        return service.getOneCalendarById(dto);
+            CalendarInfoDto dto = new CalendarInfoDto(intId);
+            return service.getOneCalendarById(dto);
+        } catch (NumberFormatException e) {
+            throw new CustomException("값 오류","요청한 값은 숫자여야 합니다.");
+        }
     }
 
     @PostMapping("write")
-    public void writeOneCalendar(@RequestBody CalendarInfoDto dto) {
+    public void writeOneCalendar(@RequestBody @Valid CalendarInfoDto dto) {
+
 
         service.addOneCalendar(dto);
 
     }
 
-    @PutMapping("update")
-    public void updateOneCalendar(@RequestBody CalendarInfoDto dto){
+    @PutMapping("update/{id}")
+    public void updateOneCalendar(@PathVariable int id, @RequestBody CalendarInfoDto dto){
+
+        dto.setId(id);
 
         service.updateOneCalendarById(dto);
 
     }
 
-    @DeleteMapping("delete")
-    public void deleteOneCalendar(@RequestBody CalendarInfoDto dto){
+    @DeleteMapping("delete/{id}")
+    public void deleteOneCalendar(@PathVariable int id, @RequestBody CalendarInfoDto dto){
+
+        dto.setId(id);
 
         service.deleteOneCalendarById(dto);
+    }
+
+    private boolean isValidEmail(String email){
+        String validEmail = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        if (email == null || email.trim().isEmpty()) return false;
+        return email.matches(validEmail);
     }
 }

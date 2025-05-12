@@ -14,6 +14,24 @@ import java.util.TimeZone;
 class CalendarRepository {
     Calendar kstTime = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
+    public void insertOneMember(MemberDto dto){
+        try (Connection conn = MySqlConnection.getConnection()) {
+
+            String sql = "INSERT INTO calendar_db.member (name, email) VALUES (?, ?, ?)";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, dto.getName());
+                stmt.setString(2, dto.getEmail());
+
+                int rows = stmt.executeUpdate();
+                System.out.println(rows + "행 삽입 완료!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void insertOneCalendar(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -160,9 +178,12 @@ class CalendarRepository {
                     dto.setName(rs.getString("name"));
                     dto.setMemberId(rs.getInt("memberId"));
                     dto.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
+                }else{
+                    throw new CustomException("없는 요청","해당 정보는 없습니다.");
                 }
             }
-
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
