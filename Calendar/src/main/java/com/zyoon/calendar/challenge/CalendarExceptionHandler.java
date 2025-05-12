@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CalendarExceptionHandler extends RuntimeException{
 
+    //에러 처리
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ExceptionDto> handleBadRequest(CustomException e) {
         return ResponseEntity.badRequest().body(new ExceptionDto(e.getErrorCode(), e.getMessage()));

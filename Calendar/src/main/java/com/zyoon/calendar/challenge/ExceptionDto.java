@@ -11,12 +11,4 @@ public class ExceptionDto {
         this.errorCode = errorCode;
         this.message = message;
     }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

@@ -15,21 +15,25 @@ public class CalendarService {
     @Autowired
     private CalendarRepository repository;
 
+    //멤버 추가
     public void addOneMember(MemberDto dto){
         repository.insertOneMember(dto);
     }
 
+    //일정 추가
     public void addOneCalendar(CalendarInfoDto dto){
         repository.insertOneCalendar(dto);
     }
 
-    public List<CalendarInfoDto> getAllCalendarListBySearch(SearchDto searchDto){
+    //페이징 처리 된 일정 조회
+    public List<CalendarInfoDto> getPagedCalendarListBySearch(SearchDto searchDto){
 
         verifyCalendarListBySearchTime(searchDto);
 
-        return repository.selectAllCalendarListBySearch(searchDto);
+        return repository.selectPagedCalendarListBySearch(searchDto);
     }
 
+    //시간 정보 검증하여 조건 검색
     private void verifyCalendarListBySearchTime(SearchDto searchDto){
         if(searchDto.getSearchTime().isPresent()){
             String searchTime = searchDto.getSearchTime().get();
@@ -46,18 +50,20 @@ public class CalendarService {
 
     }
 
-    //String 에서 타입 변경
+    //String 을 LocalDateTime 으로 변경
     public LocalDateTime changeStringToLocalDateTime(String dateStr){
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate ld = LocalDate.parse(dateStr, fmt);
         return ld.atStartOfDay();
     }
 
+    //일정 하나 조회
     public CalendarInfoDto getOneCalendarById(CalendarInfoDto dto){
         return repository.selectOneCalendarById(dto);
 
     }
 
+    //일정 업데이트. 이름, 내용 각각 업데이트 및 트랜잭션 처리
     @Transactional
     public void updateOneCalendarById(CalendarInfoDto dto){
 
@@ -73,6 +79,7 @@ public class CalendarService {
         }
     }
 
+    //일정 삭제
     public void deleteOneCalendarById(CalendarInfoDto dto){
 
         if(repository.verifyPasswordById(dto)){

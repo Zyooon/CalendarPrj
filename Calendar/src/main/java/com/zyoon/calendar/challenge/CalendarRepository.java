@@ -14,6 +14,7 @@ import java.util.TimeZone;
 class CalendarRepository {
     Calendar kstTime = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
+    //멤버 추가
     public void insertOneMember(MemberDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -32,6 +33,7 @@ class CalendarRepository {
         }
     }
 
+    //하나의 일정 추가 
     public void insertOneCalendar(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -50,6 +52,8 @@ class CalendarRepository {
             e.printStackTrace();
         }
     }
+    
+    //조건에 맞는 총 리스트 갯수 조회 -> 현재 사용 안함
     public int selectCalendarListCountBySearch(SearchDto dto){
 
         List<CalendarInfoDto> dtoList = new ArrayList<>();
@@ -98,7 +102,8 @@ class CalendarRepository {
         return 0;
     }
 
-    public List<CalendarInfoDto> selectAllCalendarListBySearch(SearchDto searchDto){
+    //페이징 된 리스트 조회
+    public List<CalendarInfoDto> selectPagedCalendarListBySearch(SearchDto searchDto){
 
         List<CalendarInfoDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
@@ -159,6 +164,7 @@ class CalendarRepository {
         return dtoList;
     }
 
+    //특정 일정 하나 조회
     public CalendarInfoDto selectOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -190,6 +196,7 @@ class CalendarRepository {
         return dto;
     }
 
+    //특정 멤버 id 하나 조회
     public int selectOneMemberIdById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -212,6 +219,7 @@ class CalendarRepository {
         return 0;
     }
 
+    //일정 내용 업데이트
     public void updateOneContentById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -230,6 +238,7 @@ class CalendarRepository {
         }
     }
 
+    //일정 작성자 이름 업데이트
     public void updateOneNameById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -247,6 +256,8 @@ class CalendarRepository {
             e.printStackTrace();
         }
     }
+
+    //일정 삭제
     public void deleteOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
@@ -264,7 +275,7 @@ class CalendarRepository {
         }
     }
 
-
+    //입력된 비밀번호와 DB 비밀번호 검증
     public boolean verifyPasswordById(CalendarInfoDto dto){
 
         String password = "";

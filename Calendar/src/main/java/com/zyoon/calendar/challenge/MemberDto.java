@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
+//멤버 관련 Dto
 @Data
 public class MemberDto {
     private int id;
