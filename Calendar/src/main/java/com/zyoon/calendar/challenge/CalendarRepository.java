@@ -12,7 +12,6 @@ import java.util.TimeZone;
 
 @Repository
 class CalendarRepository {
-    Calendar kstTime = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
     //멤버 추가
     public void insertOneMember(MemberDto dto){
@@ -153,8 +152,8 @@ class CalendarRepository {
                     dtoTemp.setMemberId(rs.getInt("memberId"));
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
-                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
-                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
+                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
+                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
 
                     dtoList.add(dtoTemp);
                 }
@@ -190,9 +189,9 @@ class CalendarRepository {
                 if (rs.next()){
                     dto.setContent(rs.getString("content"));
                     dto.setName(rs.getString("name"));
-                    dto.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
+                    dto.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
                     dto.setMemberId(rs.getInt("memberId"));
-                    dto.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
+                    dto.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
                 }else{
                     throw new CustomException("없는 요청","해당 정보는 없습니다.");
                 }
