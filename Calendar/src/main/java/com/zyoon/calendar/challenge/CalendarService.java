@@ -20,14 +20,14 @@ public class CalendarService {
     }
 
     //멤버 추가
-    public void addOneMember(MemberDto dto){
-        repository.insertOneMember(dto);
+    public int addOneMember(MemberDto dto){
+        return repository.insertOneMember(dto);
     }
 
     //일정 추가
-    public void addOneCalendar(CalendarInfoDto dto){
+    public int addOneCalendar(CalendarInfoDto dto){
 
-        repository.insertOneCalendar(dto);
+        return repository.insertOneCalendar(dto);
     }
 
     //페이징 처리 된 일정 조회
@@ -69,26 +69,29 @@ public class CalendarService {
 
     //일정 업데이트. 이름, 내용 각각 업데이트 및 트랜잭션 처리
     @Transactional
-    public void updateOneCalendarById(CalendarInfoDto dto){
+    public boolean updateOneCalendarById(CalendarInfoDto dto){
+        boolean isUpdateComplete = true;
 
         if(!repository.verifyPasswordById(dto)){
             throw new CustomException("password","비밀번호가 일치하지 않습니다.");
         }
         if(dto.getName() != null && !dto.getName().isEmpty()){
             dto.setMemberId(repository.selectOneMemberIdById(dto));
-            repository.updateOneNameById(dto);
+            isUpdateComplete = repository.updateOneNameById(dto);
         }
         if(dto.getContent() != null && !dto.getContent().isEmpty()){
-            repository.updateOneContentById(dto);
+            isUpdateComplete = repository.updateOneContentById(dto);
         }
+
+        return isUpdateComplete;
     }
 
     //일정 삭제
-    public void deleteOneCalendarById(CalendarInfoDto dto){
+    public int deleteOneCalendarById(CalendarInfoDto dto){
 
         if(repository.verifyPasswordById(dto)){
             System.out.println(dto);
-            repository.deleteOneCalendarById(dto);
+            return repository.deleteOneCalendarById(dto);
         }else {
             throw new CustomException("비밀번호 오류","비밀번호가 일치하지 않습니다.");
         }

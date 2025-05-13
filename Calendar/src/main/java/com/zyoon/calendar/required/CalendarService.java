@@ -14,8 +14,8 @@ class CalendarService {
     @Autowired
     private CalendarRepository repository;
 
-    public void addOneCalendar(CalendarInfoDto dto){
-        repository.insertOneCalendar(dto);
+    public int addOneCalendar(CalendarInfoDto dto){
+        return repository.insertOneCalendar(dto);
     }
 
     public List<CalendarInfoDto> getAllCalendarListBySearch(CalendarSearchDto dto){
@@ -50,20 +50,22 @@ class CalendarService {
 
     }
 
-    public void updateOneCalendarById(CalendarInfoDto dto){
+    public int updateOneCalendarById(CalendarInfoDto dto){
 
         if(repository.verifyPasswordById(dto)){
             System.out.println(dto);
-            repository.updateOneCalendarById(dto);
+            return repository.updateOneCalendarById(dto);
         }
+        return 0;
     }
 
-    public void deleteOneCalendarById(CalendarInfoDto dto){
+    public int deleteOneCalendarById(CalendarInfoDto dto){
 
         if(repository.verifyPasswordById(dto)){
             System.out.println(dto);
-            repository.deleteOneCalendarById(dto);
+            return repository.deleteOneCalendarById(dto);
         }
+        return 0;
     }
 
 }

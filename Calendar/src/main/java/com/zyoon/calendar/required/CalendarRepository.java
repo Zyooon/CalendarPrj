@@ -14,7 +14,7 @@ import java.util.TimeZone;
 class CalendarRepository {
     Calendar kstTime = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
-    public void insertOneCalendar(CalendarInfoDto dto){
+    public int insertOneCalendar(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "INSERT INTO calendar_db.calendar_required (name, content, password) VALUES (?, ?, ?)";
@@ -24,13 +24,13 @@ class CalendarRepository {
                 stmt.setString(2, dto.getContent());
                 stmt.setString(3, dto.getPassword());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 삽입 완료!");
+                return stmt.executeUpdate();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     public List<CalendarInfoDto> selectAllCalendarListBySearch(CalendarSearchDto dto){
@@ -114,7 +114,7 @@ class CalendarRepository {
         return dto;
     }
 
-    public void updateOneCalendarById(CalendarInfoDto dto){
+    public int updateOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "UPDATE calendar_db.calendar_required SET name = ?, content = ?, modifyDate = NOW() where id = ?";
@@ -124,15 +124,15 @@ class CalendarRepository {
                 stmt.setString(2, dto.getContent());
                 stmt.setInt(3, dto.getId());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 변경 완료!");
+                return stmt.executeUpdate();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
-    public void deleteOneCalendarById(CalendarInfoDto dto){
+    public int deleteOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "DELETE FROM calendar_db.calendar_required WHERE id = ?";
@@ -140,13 +140,13 @@ class CalendarRepository {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, dto.getId());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 삭제 완료!");
+                return stmt.executeUpdate();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
 

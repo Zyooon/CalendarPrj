@@ -35,26 +35,35 @@ class CalendarController {
     }
 
     @PostMapping("write")
-    public void writeOneCalendar(@RequestBody CalendarInfoDto dto) {
+    public ResponseEntity<String> writeOneCalendar(@RequestBody CalendarInfoDto dto) {
 
-        service.addOneCalendar(dto);
+        if(service.addOneCalendar(dto) == 1){
+            return ResponseEntity.ok("일정 등록에 성공했습니다.");
+        }
+        return ResponseEntity.ok("일정 등록에 실패했습니다.");
 
     }
 
     @PutMapping("update/{id}")
-    public void updateOneCalendar(@PathVariable("id") int id,@RequestBody CalendarInfoDto dto){
+    public ResponseEntity<String> updateOneCalendar(@PathVariable("id") int id,@RequestBody CalendarInfoDto dto){
 
         dto.setId(id);
 
-        service.updateOneCalendarById(dto);
-
+        if(service.updateOneCalendarById(dto) == 1){
+            return ResponseEntity.ok("일정 변경에 성공했습니다.");
+        }
+        return ResponseEntity.ok("일정 변경에 실패했습니다.");
     }
 
     @DeleteMapping("delete/{id}")
-    public void deleteOneCalendar(@PathVariable("id") int id,@RequestBody CalendarInfoDto dto){
+    public ResponseEntity<String> deleteOneCalendar(@PathVariable("id") int id,@RequestBody CalendarInfoDto dto){
 
         dto.setId(id);
 
-        service.deleteOneCalendarById(dto);
+        if(service.deleteOneCalendarById(dto) == 1){
+            return ResponseEntity.ok("일정 삭제에 성공했습니다.");
+        }
+
+        return ResponseEntity.ok("일정 삭제에 실패했습니다.");
     }
 }

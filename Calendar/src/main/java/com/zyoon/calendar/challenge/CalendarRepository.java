@@ -12,7 +12,7 @@ import java.util.List;
 public class CalendarRepository {
 
     //멤버 추가
-    public void insertOneMember(MemberDto dto){
+    public int insertOneMember(MemberDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "INSERT INTO calendar_db.member (name, email) VALUES (?, ?)";
@@ -21,17 +21,17 @@ public class CalendarRepository {
                 stmt.setString(1, dto.getName());
                 stmt.setString(2, dto.getEmail());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 삽입 완료!");
+                return stmt.executeUpdate();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     //하나의 일정 추가 
-    public void insertOneCalendar(CalendarInfoDto dto){
+    public int insertOneCalendar(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "INSERT INTO calendar_db.calendar_challenge (memberId, content, password) VALUES (?, ?, ?)";
@@ -41,13 +41,14 @@ public class CalendarRepository {
                 stmt.setString(2, dto.getContent());
                 stmt.setString(3, dto.getPassword());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 삽입 완료!");
+                return stmt.executeUpdate();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return 0;
     }
     
     //조건에 맞는 총 리스트 갯수 조회 -> 페이징 처리시 사용할 수 있음
@@ -226,7 +227,7 @@ public class CalendarRepository {
     }
 
     //일정 내용 업데이트
-    public void updateOneContentById(CalendarInfoDto dto){
+    public boolean updateOneContentById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "UPDATE calendar_db.calendar_challenge SET content = ?, modifyDate = NOW() where id = ?";
@@ -235,17 +236,18 @@ public class CalendarRepository {
                 stmt.setString(1, dto.getContent());
                 stmt.setInt(2, dto.getId());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 변경 완료!");
+                stmt.executeUpdate();
+                return true;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     //일정 작성자 이름 업데이트
-    public void updateOneNameById(CalendarInfoDto dto){
+    public boolean updateOneNameById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "UPDATE calendar_db.member SET name = ?, modifyDate = NOW() where id = ?";
@@ -254,17 +256,18 @@ public class CalendarRepository {
                 stmt.setString(1, dto.getName());
                 stmt.setInt(2, dto.getId());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 변경 완료!");
+                stmt.executeUpdate();
+                return true;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     //일정 삭제
-    public void deleteOneCalendarById(CalendarInfoDto dto){
+    public int deleteOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
             String sql = "DELETE FROM calendar_db.calendar_challenge WHERE id = ?";
@@ -272,13 +275,13 @@ public class CalendarRepository {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, dto.getId());
 
-                int rows = stmt.executeUpdate();
-                System.out.println(rows + "행 삭제 완료!");
+                return stmt.executeUpdate();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     //입력된 비밀번호와 DB 비밀번호 검증
