@@ -108,7 +108,7 @@ class CalendarRepository {
         List<CalendarInfoDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            StringBuilder sql = new StringBuilder("SELECT c.id,c.memberId ,name, content, c.modifyDate \n" +
+            StringBuilder sql = new StringBuilder("SELECT c.id,c.memberId ,name, content,c.enrollDate, c.modifyDate \n" +
                     "FROM calendar_db.calendar_challenge AS c \n" +
                     "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
                     "WHERE name = name");
@@ -152,6 +152,7 @@ class CalendarRepository {
                     dtoTemp.setMemberId(rs.getInt("memberId"));
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
+                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
                     dtoTemp.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
 
                     dtoList.add(dtoTemp);

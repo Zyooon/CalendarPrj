@@ -14,7 +14,9 @@ class CalendarInfoDto {
     private String password;
     //Json 변경 시 날짜 포맷 변경
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime modifyTime;
+    private LocalDateTime enrollDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime modifyDate;
 
     public CalendarInfoDto() {
 
@@ -31,7 +33,7 @@ class CalendarInfoDto {
                 ", content='" + content + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", time=" + modifyTime +
+                ", time=" + modifyDate +
                 '}';
     }
 }

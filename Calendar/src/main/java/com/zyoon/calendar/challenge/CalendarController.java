@@ -59,7 +59,6 @@ public class CalendarController {
     @PostMapping("write")
     public void writeOneCalendar(@RequestBody @Valid CalendarInfoDto dto) {
 
-
         service.addOneCalendar(dto);
 
     }

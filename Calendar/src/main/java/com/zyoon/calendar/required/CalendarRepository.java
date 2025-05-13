@@ -50,17 +50,17 @@ class CalendarRepository {
 
             if (dto.getFirstTime() != null) {
                 if(dto.getLastTime() == null){
-                    sql.append(" AND DATE(modify_date) = ?");
+                    sql.append(" AND DATE(modifyDate) = ?");
                     list.add(dto.getFirstTime());
                 }else {
-                    sql.append(" AND modify_date BETWEEN ? AND ?");
+                    sql.append(" AND modifyDate BETWEEN ? AND ?");
                     list.add(dto.getFirstTime());
                     list.add(dto.getLastTime());
                 }
 
             }
 
-            sql.append(" ORDER BY modify_date DESC");
+            sql.append(" ORDER BY modifyDate DESC");
 
 
             try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
@@ -76,8 +76,8 @@ class CalendarRepository {
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
                     dtoTemp.setPassword(rs.getString("password"));
-                    dtoTemp.setModifyTime(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
-
+                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
+                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
                     dtoList.add(dtoTemp);
                 }
             }
@@ -103,7 +103,8 @@ class CalendarRepository {
                     dto.setContent(rs.getString("content"));
                     dto.setName(rs.getString("name"));
                     dto.setPassword(rs.getString("password"));
-                    dto.setModifyTime(rs.getTimestamp("modify_date", kstTime).toLocalDateTime());
+                    dto.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
+                    dto.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
                 }
             }
 
@@ -116,7 +117,7 @@ class CalendarRepository {
     public void updateOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "UPDATE calendar_db.calendar_required SET name = ?, content = ?, modify_date = NOW() where id = ?";
+            String sql = "UPDATE calendar_db.calendar_required SET name = ?, content = ?, modifyDate = NOW() where id = ?";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, dto.getName());

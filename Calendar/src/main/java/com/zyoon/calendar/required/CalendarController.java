@@ -38,17 +38,19 @@ class CalendarController {
 
     }
 
-    @PutMapping("update")
-    public void updateOneCalendar(@RequestBody CalendarInfoDto dto){
+    @PutMapping("update/{id}")
+    public void updateOneCalendar(@PathVariable("id") int id,@RequestBody CalendarInfoDto dto){
 
-        System.out.println(dto.toString());
+        dto.setId(id);
 
         service.updateOneCalendarById(dto);
 
     }
 
-    @DeleteMapping("delete")
-    public void deleteOneCalendar(@RequestBody CalendarInfoDto dto){
+    @DeleteMapping("delete/{id}")
+    public void deleteOneCalendar(@PathVariable("id") int id,@RequestBody CalendarInfoDto dto){
+
+        dto.setId(id);
 
         service.deleteOneCalendarById(dto);
     }
