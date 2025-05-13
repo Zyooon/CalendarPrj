@@ -12,8 +12,12 @@ import java.util.List;
 @Service
 public class CalendarService {
 
+    private final CalendarRepository repository;
+
     @Autowired
-    private CalendarRepository repository;
+    public CalendarService(CalendarRepository calendarRepository){
+        this.repository = calendarRepository;
+    }
 
     //멤버 추가
     public void addOneMember(MemberDto dto){

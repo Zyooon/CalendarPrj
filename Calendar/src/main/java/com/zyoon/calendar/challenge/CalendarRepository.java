@@ -6,12 +6,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 @Repository
-class CalendarRepository {
+public class CalendarRepository {
 
     //멤버 추가
     public void insertOneMember(MemberDto dto){
@@ -52,7 +50,7 @@ class CalendarRepository {
         }
     }
     
-    //조건에 맞는 총 리스트 갯수 조회 -> 현재 사용 안함
+    //조건에 맞는 총 리스트 갯수 조회 -> 페이징 처리시 사용할 수 있음
     public int selectCalendarListCountBySearch(SearchDto dto){
 
         List<CalendarInfoDto> dtoList = new ArrayList<>();

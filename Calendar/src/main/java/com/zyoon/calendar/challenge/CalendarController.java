@@ -12,8 +12,13 @@ import java.util.Optional;
 @RequestMapping("calendar")
 public class CalendarController {
 
+
+    private final CalendarService service;
+
     @Autowired
-    private CalendarService service;
+    public CalendarController(CalendarService calendarService){
+        this.service = calendarService;
+    }
 
     //멤버 등록
     @PostMapping("join")
