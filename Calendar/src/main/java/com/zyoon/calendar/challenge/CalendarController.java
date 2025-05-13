@@ -36,10 +36,10 @@ public class CalendarController {
     //리스트 조회
     @GetMapping("list")
     public ResponseEntity<List<CalendarInfoDto>> showCalendarList(@RequestParam(defaultValue = "1")int page,
+                                                                  @RequestParam(defaultValue = "5")int pageLimit,
                                                                  @RequestParam(required = false) Optional<Integer> memberId,
                                                                  @RequestParam(required = false) Optional<String> time) {
 
-        int pageLimit = 5;
         SearchDto searchDto = new SearchDto(page, pageLimit, memberId, time);
 
         List<CalendarInfoDto> resultList = service.getPagedCalendarListBySearch(searchDto);
