@@ -9,7 +9,7 @@ public class CalendarExceptionHandler extends RuntimeException{
 
     //에러 처리
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ExceptionDto> handleBadRequest(CustomException e) {
+    public ResponseEntity<ExceptionDto> handleCustomException(CustomException e) {
         return ResponseEntity.badRequest().body(new ExceptionDto(e.getErrorCode(), e.getMessage()));
     }
 }

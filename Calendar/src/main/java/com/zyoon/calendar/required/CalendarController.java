@@ -1,6 +1,7 @@
 package com.zyoon.calendar.required;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,19 +15,23 @@ class CalendarController {
     private CalendarService service;
 
     @GetMapping("list")
-    public List<CalendarInfoDto> showCalendarList(@RequestParam(required = false) Optional<String> name, @RequestParam(required = false) Optional<String> time) {
+    public ResponseEntity<List<CalendarInfoDto>> showCalendarList(@RequestParam(required = false) Optional<String> name, @RequestParam(required = false) Optional<String> time) {
 
         CalendarSearchDto dto = new CalendarSearchDto(name, time);
 
-        return service.getAllCalendarListBySearch(dto);
+        List<CalendarInfoDto> resultList = service.getAllCalendarListBySearch(dto);
+
+        return ResponseEntity.ok(resultList);
     }
 
     @GetMapping("detail/{id}")
-    public CalendarInfoDto showOneCalendar(@PathVariable("id") int id){
+    public ResponseEntity<CalendarInfoDto> showOneCalendar(@PathVariable("id") int id){
 
         CalendarInfoDto dto = new CalendarInfoDto(id);
 
-        return service.getOneCalendarById(dto);
+        dto = service.getOneCalendarById(dto);
+
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("write")

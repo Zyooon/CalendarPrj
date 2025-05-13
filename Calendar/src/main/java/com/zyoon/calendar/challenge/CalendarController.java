@@ -2,6 +2,7 @@ package com.zyoon.calendar.challenge;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,19 +30,21 @@ public class CalendarController {
 
     //리스트 조회
     @GetMapping("list")
-    public List<CalendarInfoDto> showCalendarList(@RequestParam(defaultValue = "1")int page,
-                                                  @RequestParam(required = false) Optional<Integer> memberId,
-                                                  @RequestParam(required = false) Optional<String> time) {
+    public ResponseEntity<List<CalendarInfoDto>> showCalendarList(@RequestParam(defaultValue = "1")int page,
+                                                                 @RequestParam(required = false) Optional<Integer> memberId,
+                                                                 @RequestParam(required = false) Optional<String> time) {
 
         int pageLimit = 5;
         SearchDto searchDto = new SearchDto(page, pageLimit, memberId, time);
 
-        return service.getPagedCalendarListBySearch(searchDto);
+        List<CalendarInfoDto> resultList = service.getPagedCalendarListBySearch(searchDto);
+
+        return ResponseEntity.ok(resultList);
     }
 
     //하나의 일정 조회
     @GetMapping("detail/{id}")
-    public CalendarInfoDto showOneCalendar(@PathVariable("id") String id){
+    public ResponseEntity<CalendarInfoDto> showOneCalendar(@PathVariable("id") String id){
         try {
             int intId = Integer.parseInt(id);
             if (intId <= 0) {
@@ -49,7 +52,10 @@ public class CalendarController {
             }
 
             CalendarInfoDto dto = new CalendarInfoDto(intId);
-            return service.getOneCalendarById(dto);
+            dto = service.getOneCalendarById(dto);
+            return ResponseEntity.ok(dto);
+
+
         } catch (NumberFormatException e) {
             throw new CustomException("값 오류","요청한 값은 숫자여야 합니다.");
         }

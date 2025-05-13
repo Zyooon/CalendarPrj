@@ -48,11 +48,10 @@ public class CalendarService {
                 searchDto.setFirstTime(changeStringToLocalDateTime((searchTime)));
             }
         }
-
     }
 
     //String 을 LocalDateTime 으로 변경
-    public LocalDateTime changeStringToLocalDateTime(String dateStr){
+    private LocalDateTime changeStringToLocalDateTime(String dateStr){
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate ld = LocalDate.parse(dateStr, fmt);
         return ld.atStartOfDay();

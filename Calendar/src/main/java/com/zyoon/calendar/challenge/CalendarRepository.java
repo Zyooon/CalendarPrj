@@ -308,7 +308,6 @@ class CalendarRepository {
         }
 
         return password.equals(dto.getPassword());
-
     }
 
 
