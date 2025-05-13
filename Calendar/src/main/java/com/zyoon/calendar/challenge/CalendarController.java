@@ -36,7 +36,7 @@ public class CalendarController {
     //리스트 조회
     @GetMapping("list")
     public ResponseEntity<List<CalendarInfoDto>> showCalendarList(@RequestParam(defaultValue = "1")int page,
-                                                                  @RequestParam(defaultValue = "5")int pageLimit,
+                                                                  @RequestParam(defaultValue = "5")int pageLimit ,
                                                                  @RequestParam(required = false) Optional<Integer> memberId,
                                                                  @RequestParam(required = false) Optional<String> time) {
 
