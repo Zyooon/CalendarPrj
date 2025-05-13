@@ -1,12 +1,11 @@
 package com.zyoon.calendar.required;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Data
 class CalendarInfoDto {
     private int id;
     private String content;
@@ -24,16 +23,5 @@ class CalendarInfoDto {
 
     public CalendarInfoDto(int id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "CalendarListDto{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", time=" + modifyDate +
-                '}';
     }
 }

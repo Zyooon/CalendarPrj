@@ -18,7 +18,7 @@ class CalendarRepository {
     public void insertOneMember(MemberDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "INSERT INTO calendar_db.member (name, email) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO calendar_db.member (name, email) VALUES (?, ?)";
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, dto.getName());
@@ -123,17 +123,17 @@ class CalendarRepository {
 
             if (searchDto.getFirstTime() != null) {
                 if(searchDto.getLastTime() == null){
-                    sql.append(" AND DATE(modifyDate) = ?");
+                    sql.append(" AND DATE(c.modifyDate) = ?");
                     list.add(searchDto.getFirstTime());
                 }else {
-                    sql.append(" AND modifyDate BETWEEN ? AND ?");
+                    sql.append(" AND c.modifyDate BETWEEN ? AND ?");
                     list.add(searchDto.getFirstTime());
                     list.add(searchDto.getLastTime());
                 }
 
             }
 
-            sql.append(" ORDER BY modifyDate DESC\n");
+            sql.append(" ORDER BY c.modifyDate DESC\n");
             sql.append("LIMIT ? OFFSET ?");
             list.add(searchDto.getPageLimit());
             list.add((searchDto.getPageNumber()-1) * searchDto.getPageLimit());
@@ -146,7 +146,8 @@ class CalendarRepository {
 
                 ResultSet rs = stmt.executeQuery();
 
-                while (rs.next()){
+
+                while (rs.next()) {
                     CalendarInfoDto dtoTemp = new CalendarInfoDto();
                     dtoTemp.setId(rs.getInt("id"));
                     dtoTemp.setMemberId(rs.getInt("memberId"));
@@ -157,8 +158,14 @@ class CalendarRepository {
 
                     dtoList.add(dtoTemp);
                 }
+                if(dtoList.isEmpty()){
+                    throw new CustomException("없는 요청","해당 정보는 없습니다.");
+                }
+
             }
 
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,7 +176,7 @@ class CalendarRepository {
     public CalendarInfoDto selectOneCalendarById(CalendarInfoDto dto){
         try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "SELECT c.id,c.memberId ,name, content, c.modifyDate \n" +
+            String sql = "SELECT c.id,c.memberId ,name, content,c.enrollDate, c.modifyDate \n" +
                     "FROM calendar_db.calendar_challenge AS c \n" +
                     "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
                     "WHERE c.id = ?";
@@ -183,6 +190,7 @@ class CalendarRepository {
                 if (rs.next()){
                     dto.setContent(rs.getString("content"));
                     dto.setName(rs.getString("name"));
+                    dto.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
                     dto.setMemberId(rs.getInt("memberId"));
                     dto.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
                 }else{

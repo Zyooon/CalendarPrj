@@ -59,6 +59,18 @@ public class CalendarController {
     @PostMapping("write")
     public void writeOneCalendar(@RequestBody @Valid CalendarInfoDto dto) {
 
+        if (dto.getPassword() == null || dto.getPassword().trim().isEmpty()) {
+            throw new CustomException("비밀번호 오류","값이 비어 있거나 공백입니다.");
+        }
+
+        if (dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+            throw new CustomException("일정 오류","값이 비어 있거나 공백입니다.");
+        }
+
+        if(dto.getContent().length() > 200){
+            throw new CustomException("일정 오류","일정은 200자 이내로 작성해야 합니다.");
+        }
+
         service.addOneCalendar(dto);
 
     }
@@ -68,6 +80,10 @@ public class CalendarController {
     public void updateOneCalendar(@PathVariable int id, @RequestBody CalendarInfoDto dto){
 
         dto.setId(id);
+
+        if(dto.getContent().length() > 200){
+            throw new CustomException("일정 오류","일정은 200자 이내로 작성해야 합니다.");
+        }
 
         service.updateOneCalendarById(dto);
 

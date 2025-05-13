@@ -18,8 +18,6 @@ class CalendarController {
 
         CalendarSearchDto dto = new CalendarSearchDto(name, time);
 
-        System.out.println(dto.toString());
-
         return service.getAllCalendarListBySearch(dto);
     }
 

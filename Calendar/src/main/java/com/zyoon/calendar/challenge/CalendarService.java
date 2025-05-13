@@ -22,6 +22,7 @@ public class CalendarService {
 
     //일정 추가
     public void addOneCalendar(CalendarInfoDto dto){
+
         repository.insertOneCalendar(dto);
     }
 
@@ -85,6 +86,8 @@ public class CalendarService {
         if(repository.verifyPasswordById(dto)){
             System.out.println(dto);
             repository.deleteOneCalendarById(dto);
+        }else {
+            throw new CustomException("비밀번호 오류","비밀번호가 일치하지 않습니다.");
         }
     }
 
