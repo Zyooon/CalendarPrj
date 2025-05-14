@@ -1,36 +1,28 @@
 package com.zyoon.calendar.required;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 @Repository
 class CalendarRepository {
-    Calendar kstTime = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    CalendarRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public int insertOneCalendar(CalendarInfoDto dto){
-        try (Connection conn = MySqlConnection.getConnection()) {
-
-            String sql = "INSERT INTO calendar_db.calendar_required (name, content, password) VALUES (?, ?, ?)";
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, dto.getName());
-                stmt.setString(2, dto.getContent());
-                stmt.setString(3, dto.getPassword());
-
-                return stmt.executeUpdate();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
+        String sql = "INSERT INTO calendar_db.calendar_required (name, content, password) VALUES (?, ?, ?)";
+        return jdbcTemplate.update(sql, dto.getName(), dto.getContent(), dto.getPassword());
     }
 
     public List<CalendarInfoDto> selectAllCalendarListBySearch(CalendarSearchDto dto){
@@ -76,8 +68,8 @@ class CalendarRepository {
                     dtoTemp.setContent(rs.getString("content"));
                     dtoTemp.setName(rs.getString("name"));
                     dtoTemp.setPassword(rs.getString("password"));
-                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
-                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
+                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
+                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
                     dtoList.add(dtoTemp);
                 }
             }
@@ -89,88 +81,41 @@ class CalendarRepository {
     }
 
     public CalendarInfoDto selectOneCalendarById(CalendarInfoDto dto){
-        try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "SELECT * FROM calendar_db.calendar_required WHERE id = ?";
+        String sql = "SELECT * FROM calendar_db.calendar_required WHERE id = ?";
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                stmt.setObject(1, dto.getId());
-
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()){
-                    dto.setContent(rs.getString("content"));
-                    dto.setName(rs.getString("name"));
-                    dto.setPassword(rs.getString("password"));
-                    dto.setEnrollDate(rs.getTimestamp("enrollDate", kstTime).toLocalDateTime());
-                    dto.setModifyDate(rs.getTimestamp("modifyDate", kstTime).toLocalDateTime());
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return dto;
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            CalendarInfoDto resultDto = new CalendarInfoDto();
+            resultDto.setId(rs.getInt("id"));
+            resultDto.setContent(rs.getString("content"));
+            resultDto.setName(rs.getString("name"));
+            resultDto.setPassword(rs.getString("password"));
+            resultDto.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
+            resultDto.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
+            return resultDto;
+        }, dto.getId());
     }
 
     public int updateOneCalendarById(CalendarInfoDto dto){
-        try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "UPDATE calendar_db.calendar_required SET name = ?, content = ?, modifyDate = NOW() where id = ?";
+        String sql = "UPDATE calendar_db.calendar_required SET name = ?, content = ?, modifyDate = NOW() where id = ?";
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, dto.getName());
-                stmt.setString(2, dto.getContent());
-                stmt.setInt(3, dto.getId());
+        return jdbcTemplate.update(sql, dto.getName(), dto.getContent(), dto.getId());
 
-                return stmt.executeUpdate();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
     public int deleteOneCalendarById(CalendarInfoDto dto){
-        try (Connection conn = MySqlConnection.getConnection()) {
 
-            String sql = "DELETE FROM calendar_db.calendar_required WHERE id = ?";
+        String sql = "DELETE FROM calendar_db.calendar_required WHERE id = ?";
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, dto.getId());
-
-                return stmt.executeUpdate();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return jdbcTemplate.update(sql, dto.getId());
     }
 
 
     public boolean verifyPasswordById(CalendarInfoDto dto){
 
-        String password = "";
-        try (Connection conn = MySqlConnection.getConnection()) {
+        String sql = "SELECT password FROM calendar_db.calendar_required WHERE id = ?";
 
-            String sql = "SELECT password FROM calendar_db.calendar_required WHERE id = ?";
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                stmt.setObject(1, dto.getId());
-
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()){
-                    password = rs.getString("password");
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String password = jdbcTemplate.queryForObject(sql, String.class, dto.getId());
 
         return password.equals(dto.getPassword());
 
