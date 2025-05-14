@@ -37,8 +37,8 @@ public class CalendarRepository {
         return jdbcTemplate.update(sql, dto.getMemberId(), dto.getContent(), dto.getPassword());
     }
 
-    //페이징 된 리스트 조회
-    public List<CalendarInfoDto> selectPagedCalendarListBySearch(SearchDto searchDto){
+    //페이징 된 리스트 조회 - 예전 JDBC 사용 (현재 사용 X)
+    public List<CalendarInfoDto> selectPagedCalendarListBySearchOld(SearchDto searchDto){
 
         List<CalendarInfoDto> dtoList = new ArrayList<>();
         try (Connection conn = MySqlConnection.getConnection()) {
@@ -51,7 +51,7 @@ public class CalendarRepository {
             List<Object> list = new ArrayList<>();
 
             // 조건 추가
-            if (!searchDto.getSearchMemberId().isEmpty()) {
+            if (searchDto.getSearchMemberId().isPresent()) {
                 sql.append(" AND memberId = ?");
                 list.add(searchDto.getSearchMemberId().get());
             }
@@ -105,6 +105,58 @@ public class CalendarRepository {
             e.printStackTrace();
         }
         return dtoList;
+    }
+
+    //JDBC 템플릿 사용
+    public List<CalendarInfoDto> selectPagedCalendarListBySearch(SearchDto searchDto) {
+
+        StringBuilder sql = new StringBuilder("SELECT c.id,c.memberId ,name, content,c.enrollDate, c.modifyDate \n" +
+                "FROM calendar_db.calendar_challenge AS c \n" +
+                "JOIN calendar_db.member AS m ON c.memberId = m.id\n" +
+                "WHERE name = name");
+
+        List<Object> list = new ArrayList<>();
+
+        // 조건 추가
+        if (searchDto.getSearchMemberId().isPresent()) {
+            sql.append(" AND c.memberId = ?");
+            list.add(searchDto.getSearchMemberId().get());
+        }
+
+        if (searchDto.getFirstTime() != null) {
+            if (searchDto.getLastTime() == null) {
+                sql.append(" AND DATE(c.modifyDate) = ?");
+                list.add(searchDto.getFirstTime());
+            } else {
+                sql.append(" AND c.modifyDate BETWEEN ? AND ?");
+                list.add(searchDto.getFirstTime());
+                list.add(searchDto.getLastTime());
+            }
+        }
+
+        sql.append(" ORDER BY c.modifyDate DESC");
+        sql.append(" LIMIT ? OFFSET ?");
+        list.add(searchDto.getPageLimit());
+        list.add((searchDto.getPageNumber() - 1) * searchDto.getPageLimit());
+
+        List<CalendarInfoDto> resultList = jdbcTemplate.query(sql.toString(), list.toArray(),
+            (rs, rowNum) -> {
+                CalendarInfoDto dto = new CalendarInfoDto();
+                dto.setId(rs.getInt("id"));
+                dto.setMemberId(rs.getInt("memberId"));
+                dto.setContent(rs.getString("content"));
+                dto.setName(rs.getString("name"));
+                dto.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
+                dto.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
+                return dto;
+            }
+        );
+
+        if (resultList.isEmpty()) {
+            throw new CustomException("없는 요청", "해당 정보는 없습니다.");
+        }
+
+        return resultList;
     }
 
     //특정 일정 하나 조회

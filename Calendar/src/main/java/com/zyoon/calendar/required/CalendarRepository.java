@@ -27,56 +27,42 @@ class CalendarRepository {
 
     public List<CalendarInfoDto> selectAllCalendarListBySearch(CalendarSearchDto dto){
 
-        List<CalendarInfoDto> dtoList = new ArrayList<>();
-        try (Connection conn = MySqlConnection.getConnection()) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM calendar_db.calendar_required WHERE 1=1");
 
-            StringBuilder sql = new StringBuilder("SELECT * FROM calendar_db.calendar_required WHERE 1=1");
+        List<Object> list = new ArrayList<>();
 
-            List<Object> list = new ArrayList<>();
-
-            // 조건 추가
-            if (!dto.getSearchName().isEmpty()) {
-                sql.append(" AND name LIKE ?");
-                list.add("%" + dto.getSearchName().get() + "%");
-            }
-
-            if (dto.getFirstTime() != null) {
-                if(dto.getLastTime() == null){
-                    sql.append(" AND DATE(modifyDate) = ?");
-                    list.add(dto.getFirstTime());
-                }else {
-                    sql.append(" AND modifyDate BETWEEN ? AND ?");
-                    list.add(dto.getFirstTime());
-                    list.add(dto.getLastTime());
-                }
-
-            }
-
-            sql.append(" ORDER BY modifyDate DESC");
-
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
-                for (int i = 0; i < list.size(); i++) {
-                    stmt.setObject(i + 1, list.get(i));
-                }
-
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()){
-                    CalendarInfoDto dtoTemp = new CalendarInfoDto();
-                    dtoTemp.setId(rs.getInt("id"));
-                    dtoTemp.setContent(rs.getString("content"));
-                    dtoTemp.setName(rs.getString("name"));
-                    dtoTemp.setPassword(rs.getString("password"));
-                    dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
-                    dtoTemp.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
-                    dtoList.add(dtoTemp);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 조건 추가
+        if (!dto.getSearchName().isEmpty()) {
+            sql.append(" AND name LIKE ?");
+            list.add("%" + dto.getSearchName().get() + "%");
         }
+
+        if (dto.getFirstTime() != null) {
+            if(dto.getLastTime() == null){
+                sql.append(" AND DATE(modifyDate) = ?");
+                list.add(dto.getFirstTime());
+            }else {
+                sql.append(" AND modifyDate BETWEEN ? AND ?");
+                list.add(dto.getFirstTime());
+                list.add(dto.getLastTime());
+            }
+
+        }
+
+        sql.append(" ORDER BY modifyDate DESC");
+
+        List<CalendarInfoDto> dtoList = jdbcTemplate.query(sql.toString(), list.toArray(),
+                (rs,rowNum)->{
+            CalendarInfoDto dtoTemp = new CalendarInfoDto();
+            dtoTemp.setId(rs.getInt("id"));
+            dtoTemp.setContent(rs.getString("content"));
+            dtoTemp.setName(rs.getString("name"));
+            dtoTemp.setPassword(rs.getString("password"));
+            dtoTemp.setEnrollDate(rs.getTimestamp("enrollDate").toLocalDateTime());
+            dtoTemp.setModifyDate(rs.getTimestamp("modifyDate").toLocalDateTime());
+            return dtoTemp;
+        });
+
         return dtoList;
     }
 
