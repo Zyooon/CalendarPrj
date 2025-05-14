@@ -27,6 +27,10 @@ public class CalendarService {
     //일정 추가
     public int addOneCalendar(CalendarInfoDto dto){
 
+        if (dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+            throw new CustomException("일정 오류","값이 비어 있거나 공백입니다.");
+        }
+
         return repository.insertOneCalendar(dto);
     }
 
